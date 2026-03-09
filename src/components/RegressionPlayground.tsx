@@ -97,17 +97,17 @@ export function RegressionPlayground() {
       sumSquaredError += Math.pow((point.label as number) - trueValue, 2);
     });
     return sumSquaredError / trainingData.length;
-  }, [trainingData]);
+  }, [trainingData, regressionCurve]);
 
   // Plotly traces
-  const traces: Plotly.Data[] = [
+  const traces: object[] = [
     // True sine wave (dashed line)
     {
       type: 'scatter',
       mode: 'lines',
       x: trueSine.x,
       y: trueSine.y,
-      line: { color: '#22C55E', width: 2, dash: 'dash' },
+      line: { color: 'hsl(142, 76%, 45%)', width: 2, dash: 'dash' },
       name: 'True Function (sin)',
       hovertemplate: 'x: %{x:.2f}<br>sin(x): %{y:.2f}<extra></extra>',
     },
@@ -119,9 +119,9 @@ export function RegressionPlayground() {
       y: trainingData.map((p) => p.label as number),
       marker: {
         size: 8,
-        color: '#3B82F6',
+        color: 'hsl(217, 91%, 60%)',
         opacity: 0.7,
-        line: { width: 1, color: '#1E40AF' },
+        line: { width: 1, color: 'hsl(217, 91%, 40%)' },
       },
       name: 'Training Data',
       hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<extra></extra>',
@@ -135,13 +135,13 @@ export function RegressionPlayground() {
       mode: 'lines',
       x: regressionCurve.x,
       y: regressionCurve.y,
-      line: { color: '#F97316', width: 3 },
+      line: { color: 'hsl(32, 95%, 55%)', width: 3 },
       name: `KNN Regression (K=${k})`,
       hovertemplate: 'x: %{x:.2f}<br>Predicted: %{y:.2f}<extra></extra>',
     });
   }
 
-  const layout: Partial<Plotly.Layout> = {
+  const layout = {
     autosize: true,
     height: 450,
     margin: { t: 20, r: 20, b: 40, l: 50 },
@@ -271,12 +271,12 @@ export function RegressionPlayground() {
         {/* Plotly Chart */}
         <div className="plotly-container">
           <Plot
-            data={traces}
-            layout={layout}
+            data={traces as any}
+            layout={layout as any}
             config={{
               responsive: true,
               displayModeBar: true,
-              modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+              modeBarButtonsToRemove: ['lasso2d', 'select2d'] as any,
             }}
             style={{ width: '100%' }}
           />

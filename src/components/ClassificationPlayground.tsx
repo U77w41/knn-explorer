@@ -20,10 +20,17 @@ import {
   generateDecisionBoundaryGrid,
   generateTwoMoons,
   generateConcentricCircles,
-  classifyKNN,
 } from '@/lib/knnEngine';
 
 type DatasetType = 'two_moons' | 'circles' | 'custom';
+
+interface PlotClickEvent {
+  points: Array<{
+    x?: number;
+    y?: number;
+    pointIndex?: number;
+  }>;
+}
 
 /**
  * Classification Playground - Interactive KNN visualization
@@ -105,7 +112,7 @@ export function ClassificationPlayground() {
 
   // Handle click on plot to add custom point
   const handlePlotClick = useCallback(
-    (event: Plotly.PlotMouseEvent) => {
+    (event: PlotClickEvent) => {
       if (datasetType !== 'custom') return;
       
       const point = event.points[0];
@@ -127,7 +134,7 @@ export function ClassificationPlayground() {
   const class1Points = trainingData.filter((p) => p.label === 1);
 
   // Plotly traces
-  const traces: Plotly.Data[] = [];
+  const traces: object[] = [];
 
   // Decision boundary contour
   if (gridData) {
@@ -137,15 +144,15 @@ export function ClassificationPlayground() {
       y: gridData.y,
       z: gridData.z,
       colorscale: [
-        [0, 'rgba(59, 130, 246, 0.3)'],   // Blue (class 0)
-        [1, 'rgba(249, 115, 22, 0.3)'],   // Orange (class 1)
+        [0, 'rgba(59, 130, 246, 0.3)'],
+        [1, 'rgba(249, 115, 22, 0.3)'],
       ],
       showscale: false,
       contours: {
         coloring: 'heatmap',
       },
       hoverinfo: 'skip',
-    } as Plotly.Data);
+    });
   }
 
   // Class 0 scatter points
@@ -156,8 +163,8 @@ export function ClassificationPlayground() {
     y: class0Points.map((p) => p.features[1]),
     marker: {
       size: 10,
-      color: '#3B82F6',
-      line: { width: 2, color: '#1E40AF' },
+      color: 'hsl(217, 91%, 60%)',
+      line: { width: 2, color: 'hsl(217, 91%, 40%)' },
     },
     name: 'Class 0',
     hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<extra>Class 0</extra>',
@@ -171,14 +178,14 @@ export function ClassificationPlayground() {
     y: class1Points.map((p) => p.features[1]),
     marker: {
       size: 10,
-      color: '#F97316',
-      line: { width: 2, color: '#C2410C' },
+      color: 'hsl(32, 95%, 55%)',
+      line: { width: 2, color: 'hsl(32, 95%, 40%)' },
     },
     name: 'Class 1',
     hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<extra>Class 1</extra>',
   });
 
-  const layout: Partial<Plotly.Layout> = {
+  const layout = {
     autosize: true,
     height: 500,
     margin: { t: 20, r: 20, b: 40, l: 40 },
@@ -311,7 +318,6 @@ export function ClassificationPlayground() {
                 size="sm"
                 variant={selectedClass === 0 ? 'default' : 'outline'}
                 onClick={() => setSelectedClass(0)}
-                className="bg-blue-500 hover:bg-blue-600"
               >
                 Class 0
               </Button>
@@ -319,7 +325,6 @@ export function ClassificationPlayground() {
                 size="sm"
                 variant={selectedClass === 1 ? 'default' : 'outline'}
                 onClick={() => setSelectedClass(1)}
-                className="bg-orange-500 hover:bg-orange-600"
               >
                 Class 1
               </Button>
@@ -364,14 +369,14 @@ export function ClassificationPlayground() {
         {/* Plotly Chart */}
         <div className="plotly-container">
           <Plot
-            data={traces}
-            layout={layout}
+            data={traces as any}
+            layout={layout as any}
             config={{
               responsive: true,
               displayModeBar: true,
-              modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+              modeBarButtonsToRemove: ['lasso2d', 'select2d'] as any,
             }}
-            onClick={handlePlotClick}
+            onClick={handlePlotClick as any}
             style={{ width: '100%' }}
           />
         </div>
@@ -383,11 +388,11 @@ export function ClassificationPlayground() {
             <p className="text-xs text-muted-foreground">Total Points</p>
           </div>
           <div className="p-3 bg-muted/20 rounded-lg">
-            <p className="text-2xl font-bold text-blue-500">{class0Points.length}</p>
+            <p className="text-2xl font-bold text-class-0">{class0Points.length}</p>
             <p className="text-xs text-muted-foreground">Class 0</p>
           </div>
           <div className="p-3 bg-muted/20 rounded-lg">
-            <p className="text-2xl font-bold text-orange-500">{class1Points.length}</p>
+            <p className="text-2xl font-bold text-class-1">{class1Points.length}</p>
             <p className="text-xs text-muted-foreground">Class 1</p>
           </div>
         </div>
