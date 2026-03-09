@@ -18,4 +18,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // GitHub Pages deployment - set base path to repo name
+  // Update 'knn-interactive' to match your actual repository name
+  base: mode === 'production' ? '/knn-interactive/' : '/',
 }));
